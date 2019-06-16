@@ -15,17 +15,9 @@ open Microsoft.AspNetCore.Mvc
 type TodoController(context) =
     inherit Controller()
     let _context: TodoContext = context
-    // new() = new TodoController(new TodoRepository())
-    // new(repository : IRepository<Todo>) as this = {} then
-    //     this._repository <- repository
-
-    // [<DefaultValue>]
-    // val mutable private _repository : IRepository<Todo>
 
     [<HttpGet>]
     member this.Get() =
-        // let todos = this._repository.GetAll()
-        // ActionResult<IList<Todo>>(todos)
         let todos =
             if isNull _context.Todo then
                 new List<Todo>()
@@ -34,7 +26,7 @@ type TodoController(context) =
         ActionResult<List<Todo>>(todos)
 
     [<HttpGet("{id}")>]
-    member this.Get(id: int) =
+    member this.Get(id: string) =
         let todo = _context.Todo.SingleOrDefault(fun m -> m.Id = id)
         ActionResult<Todo>(todo)
 
@@ -45,16 +37,16 @@ type TodoController(context) =
         todo.Id
 
     [<HttpPut("{id}")>]
-    member this.Put(id: int, [<FromBody>] todo: Todo) =
+    member this.Put(id: string, [<FromBody>] todo: Todo) =
         if id <> todo.Id then
-            -1
+            ""
         else
             _context.Update(todo) |> ignore
             _context.SaveChanges() |> ignore
             todo.Id
 
     [<HttpDelete("{id}")>]
-    member this.Delete(id: int) =
+    member this.Delete(id: string) =
         let todo = _context.Todo.SingleOrDefault(fun m -> m.Id = id)
         _context.Remove(todo) |> ignore
         _context.SaveChanges() |> ignore

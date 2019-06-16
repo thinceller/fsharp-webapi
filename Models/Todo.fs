@@ -6,7 +6,7 @@ open Microsoft.EntityFrameworkCore.Infrastructure
 [<CLIMutable>]
 type Todo =
     {
-        Id: int
+        Id: string
         Name: string
         Description: string
         isComplete: bool
